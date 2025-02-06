@@ -4,7 +4,7 @@
  */
 import { MOCK_POSTS } from "@/lib/mock-data";
 import { Post } from "@/lib/types";
-import FeedCard from "./FeedCard";
+import FeedCard from "@/components/FeedCard";
 
 interface CommunityFeedProps {
   additionalPosts?: Post[];
