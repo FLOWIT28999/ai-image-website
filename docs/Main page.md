@@ -7,7 +7,7 @@
 ### **1.1 UI 레이아웃 및 구조**  
 - 메인 페이지에서 **AI 이미지 생성**과 **커뮤니티 피드**를 제공  
 - **반응형 디자인 적용** (모바일, 태블릿, 데스크탑)  
-- **ShadCN 컴포넌트 활용**: `Input`, `Button`, `Card`, `Skeleton`, `DropdownMenu`, `Avatar` 사용  
+- **ShadCN 컴포넌트 활용**: `Input`, `Button`, `Card`, `Dialog`, `Textarea`, `Avatar` 사용  
 
 ---
 
@@ -27,50 +27,46 @@
 #### **🔹 2) AI 이미지 생성 영역 (`AIImageGenerator.tsx`)**  
 ✅ **프롬프트 입력 및 생성 버튼**  
 ✅ **랜덤 프롬프트 기능**  
+✅ **생성된 이미지 피드 공유 기능**  
 
 - **입력 필드:**  
-  - 텍스트 입력 (`<Input />`, ShadCN)  
-  - 랜덤 프롬프트 버튼 (`<Button variant="outline" />`, ShadCN)  
-  - 생성 버튼 (`<Button variant="default" />`, ShadCN)  
+  - 텍스트 입력 (`<Input />`)  
+  - 랜덤 프롬프트 버튼 (`<Button variant="outline" />`)  
+  - 생성 버튼 (`<Button variant="default" />`)  
 
-- **사용자 액션:**  
-  - 입력 필드에 프롬프트 입력 후 `Enter` 또는 "🎨 생성하기" 버튼 클릭  
-  - 랜덤 프롬프트 버튼 클릭 시 자동 입력  
+- **이미지 생성 결과:**  
+  - 생성 중 로딩 애니메이션  
+  - 생성된 이미지 표시  
+  - "피드에 공유하기" 버튼  
 
 - **UX 개선 요소:**  
-  - 버튼 클릭 시 `LoadingAnimation.tsx` 실행  
+  - Enter 키로 이미지 생성 가능  
+  - 생성 중 상태 표시  
+  - 공유 후 입력 필드 초기화  
 
 ---
 
-#### **🔹 3) 로딩 애니메이션 (`LoadingAnimation.tsx`)**  
-✅ **이미지 생성 중간에 배치**  
-✅ **ShadCN `Skeleton` 컴포넌트 사용**  
-
-- **로딩 상태:**  
-  - `<Skeleton className="w-full h-64" />`  
-  - "이미지 생성 중..." 텍스트 표시  
-
----
-
-#### **🔹 4) 커뮤니티 피드 (`CommunityFeed.tsx`)**  
+#### **🔹 3) 커뮤니티 피드 (`CommunityFeed.tsx`)**  
 ✅ **반응형 카드 UI (ShadCN `Card` 사용)**  
 ✅ **최신 업로드 및 인기 작품 표시**  
+✅ **실시간 피드 업데이트**  
 
 - **레이아웃 구성:**  
-  - `🔥 인기 AI 작품` 섹션  
-  - `🆕 최신 업로드` 섹션  
-  - `FeedCard.tsx`를 반복 렌더링  
+  - `🔥 인기 AI 작품` 섹션 (좋아요 순 정렬)  
+  - `🆕 최신 업로드` 섹션 (시간순 정렬)  
+  - 새로 추가된 작품 실시간 반영  
 
 - **반응형 그리드:**  
   - 모바일 → 2개씩  
   - 태블릿 → 3개씩  
-  - 데스크탑 → 4개 이상  
+  - 데스크탑 → 4개씩  
 
 ---
 
-#### **🔹 5) 개별 커뮤니티 카드 (`FeedCard.tsx`)**  
+#### **🔹 4) 피드 카드 (`FeedCard.tsx`)**  
 ✅ **ShadCN `Card` 컴포넌트 활용**  
-✅ **좋아요(❤️), 댓글(💬) 기능 포함**  
+✅ **좋아요, 댓글 기능 포함**  
+✅ **상세 페이지 연결**  
 
 - **표시 항목:**  
   - 생성된 이미지 (`<Image />`)  
@@ -78,28 +74,54 @@
   - 제목 및 태그  
   - 좋아요 (`❤️`) 및 댓글 (`💬`) 개수  
 
----
-
-### **1.3 API 연동**  
-✅ **AI 이미지 생성 API 호출**  
-✅ **커뮤니티 피드 데이터 불러오기**  
-
-- **AI 생성 요청 (`generateImage`)**
-  - API: `POST /api/generate`
-  - 요청: `{ prompt: string }`
-  - 응답: `{ imageUrl: string }`
-
-- **커뮤니티 피드 데이터 (`getFeed`)**
-  - API: `GET /api/feed`
-  - 응답: `{ posts: [{ id, imageUrl, user, likes, comments }] }`
+- **상호작용:**  
+  - 좋아요 토글 기능  
+  - 댓글 모달 표시  
+  - 카드 클릭 시 상세 페이지 이동  
 
 ---
 
-### **1.4 테스트 체크리스트**  
-✅ **프롬프트 입력 후 엔터 키 입력 시 이미지 생성되는가?**  
-✅ **랜덤 프롬프트 버튼 클릭 시 텍스트가 자동 입력되는가?**  
-✅ **이미지 생성 후 피드에 자동 추가되는가?**  
-✅ **커뮤니티 피드에서 반응형 UI가 정상 동작하는가?**  
+#### **🔹 5) 댓글 모달 (`CommentModal.tsx`)**  
+✅ **ShadCN `Dialog` 컴포넌트 활용**  
+✅ **댓글 목록 및 작성 기능**  
+
+- **구성 요소:**  
+  - 댓글 목록 스크롤 영역  
+  - 댓글 작성 입력 필드  
+  - 작성 버튼  
+
+- **기능:**  
+  - 실시간 댓글 추가  
+  - 댓글 작성 시간 표시  
+  - 댓글 작성자 정보 표시  
+
+---
+
+#### **🔹 6) 게시물 상세 페이지 (`app/post/[id]/page.tsx`)**  
+✅ **상세 이미지 및 정보 표시**  
+✅ **댓글 기능 통합**  
+
+- **레이아웃:**  
+  - 큰 이미지 표시  
+  - 작성자 정보  
+  - 제목 및 태그  
+  - 좋아요/댓글 상호작용  
+  - 댓글 목록 및 작성  
+
+- **기능:**  
+  - 뒤로가기 버튼  
+  - 좋아요 토글  
+  - 댓글 작성 및 표시  
+  - 시간 정보 표시  
+
+---
+
+### **1.3 상태 관리**  
+✅ **로컬 상태 관리**  
+  - 좋아요 상태  
+  - 댓글 목록  
+  - 생성된 이미지  
+  - 새로운 게시물  
 
 ---
 
@@ -107,74 +129,102 @@
 
 ### **2.1 API 엔드포인트 정의**  
 
-#### **🔹 1) AI 이미지 생성 API (`app/api/generate/route.ts`)**  
-✅ **프롬프트를 입력받아 AI 이미지 생성**  
-✅ **이미지를 저장 후 URL 반환**  
+#### **🔹 1) AI 이미지 생성 API (`/api/generate`)**  
+- **요청 (`POST`):**  
+  ```json
+  {
+    "prompt": string,
+    "style?": string,
+    "resolution?": string
+  }
+  ```
+- **응답:**  
+  ```json
+  {
+    "imageUrl": string,
+    "prompt": string
+  }
+  ```
 
-- **요청 (`POST /api/generate`)**  
-  - `body`: `{ prompt: string }`
-- **응답 (`200 OK`)**  
-  - `{ imageUrl: string }`
+#### **🔹 2) 게시물 API**
+- **게시물 목록 (`GET /api/posts`)**  
+  ```json
+  {
+    "posts": [Post],
+    "cursor": string
+  }
+  ```
+
+- **게시물 상세 (`GET /api/posts/:id`)**  
+  ```json
+  {
+    "post": Post
+  }
+  ```
+
+- **게시물 생성 (`POST /api/posts`)**  
+  ```json
+  {
+    "imageUrl": string,
+    "title": string,
+    "tags": string[]
+  }
+  ```
+
+#### **🔹 3) 상호작용 API**
+- **좋아요 토글 (`POST /api/posts/:id/like`)**
+- **댓글 작성 (`POST /api/posts/:id/comments`)**  
+  ```json
+  {
+    "content": string
+  }
+  ```
 
 ---
 
-#### **🔹 2) 커뮤니티 피드 API (`app/api/feed/route.ts`)**  
-✅ **최신 업로드 및 인기 작품 조회**  
+### **2.2 데이터베이스 스키마**  
 
-- **요청 (`GET /api/feed`)**  
-- **응답 (`200 OK`)**  
-```json
-{
-  "posts": [
-    {
-      "id": "123",
-      "imageUrl": "https://example.com/image.jpg",
-      "user": { "id": "456", "name": "John Doe", "avatar": "https://example.com/avatar.jpg" },
-      "likes": 50,
-      "comments": 10
-    }
-  ]
-}
-```
-
----
-
-### **2.2 데이터베이스 설계 (`db/schema.ts`)**  
-
-#### **🔹 1) 이미지 생성 테이블 (`generated_images`)**  
+#### **🔹 1) 게시물 테이블 (`posts`)**  
 | 컬럼명 | 타입 | 설명 |
 |--------|------|------|
-| `id` | `string (UUID)` | 고유 식별자 |
-| `user_id` | `string` | 생성한 사용자 ID |
-| `prompt` | `string` | 입력된 프롬프트 |
-| `image_url` | `string` | 저장된 이미지 URL |
-| `created_at` | `timestamp` | 생성일 |
-
----
-
-#### **🔹 2) 커뮤니티 피드 테이블 (`posts`)**  
-| 컬럼명 | 타입 | 설명 |
-|--------|------|------|
-| `id` | `string (UUID)` | 게시글 ID |
-| `user_id` | `string` | 작성자 ID |
-| `image_url` | `string` | 게시된 이미지 |
-| `title` | `string` | 제목 |
-| `tags` | `string[]` | 태그 리스트 |
+| `id` | `string` | 고유 식별자 |
+| `imageUrl` | `string` | 이미지 URL |
+| `title` | `string` | 제목 (프롬프트) |
+| `userId` | `string` | 작성자 ID |
+| `tags` | `string[]` | 태그 목록 |
 | `likes` | `number` | 좋아요 수 |
-| `comments_count` | `number` | 댓글 개수 |
+| `commentsCount` | `number` | 댓글 수 |
+| `createdAt` | `timestamp` | 생성일 |
 
----
+#### **🔹 2) 댓글 테이블 (`comments`)**  
+| 컬럼명 | 타입 | 설명 |
+|--------|------|------|
+| `id` | `string` | 댓글 ID |
+| `postId` | `string` | 게시물 ID |
+| `userId` | `string` | 작성자 ID |
+| `content` | `string` | 댓글 내용 |
+| `createdAt` | `timestamp` | 작성일 |
 
-### **2.3 테스트 체크리스트**  
-✅ **AI 생성 API가 정상적으로 이미지를 반환하는가?**  
-✅ **커뮤니티 피드에서 데이터가 올바르게 불러와지는가?**  
-✅ **좋아요 및 댓글 개수가 정상적으로 반영되는가?**  
+#### **🔹 3) 좋아요 테이블 (`likes`)**  
+| 컬럼명 | 타입 | 설명 |
+|--------|------|------|
+| `id` | `string` | 좋아요 ID |
+| `postId` | `string` | 게시물 ID |
+| `userId` | `string` | 사용자 ID |
+| `createdAt` | `timestamp` | 생성일 |
 
 ---
 
 ## **🚀 결론 및 다음 단계**
-1️⃣ **메인 페이지 구현 후 테스트 진행**  
-2️⃣ **이미지 생성 결과 페이지 및 갤러리 기능 개발**  
-3️⃣ **커뮤니티 공유 및 상호작용 기능 추가**  
+1️⃣ **현재 구현된 기능**
+- ✅ 메인 페이지 UI 구현
+- ✅ AI 이미지 생성 및 피드 공유
+- ✅ 좋아요/댓글 기능
+- ✅ 상세 페이지
 
-이제 구현을 시작할 준비가 완료되었습니다! 🚀
+2️⃣ **다음 구현 단계**
+- ⬜ 백엔드 API 연동
+- ⬜ 사용자 인증/인가
+- ⬜ 실시간 알림
+- ⬜ 이미지 최적화
+- ⬜ 성능 개선
